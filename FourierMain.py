@@ -1,6 +1,7 @@
 ### Libraries ###
 import numpy as np
 import matplotlib.animation as animation # to save the "animation object"
+import sys
 
 
 ### My own imports ###
@@ -85,10 +86,9 @@ def get_desmos_string(coeff, ind): # returns 2D vector with sin and cos-funcs to
 def main():    
     
     # read svg-file (change path for you own svg-file)
-    handler = SVG_Handler("images/img13.svg")
+    handler = SVG_Handler("images/nuts2.svg")
     
-    
-    save_video = False # true to save animation as a video (might take some time)
+    save_video = True # true to save animation as a video (might take some time)
     only_fourier_calc = False # will not take into account the animation --> way faster if you just want for example the desmos equation
     simple_plot = False # true to not calculate the animation (for "fast" testing)
     plot_reverse = True # animates the picture in reverse (for example if you have a text)
@@ -104,6 +104,9 @@ def main():
     
     ind, coeff = get_fourier_coeff(lambda t: handler.get_point(t, reverse=plot_reverse), T=T, N=fourier_N) # calculates the fourier coefficients
     print("Calculation of fourier coefficients done.")
+
+    coeff[ind==0] = 0
+    # print(coeff)
     
     # outputs the latex/desmos code (comment out if you don't want it)
     print("\n" + get_fourier_latex(coeff, ind) + "\n")
