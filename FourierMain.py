@@ -66,18 +66,18 @@ def get_fourier_latex(coeff, ind, coeff_per_line=4): # returns "formatted" latex
 def get_desmos_string(coeff, ind): # returns 2D vector with sin and cos-funcs to copy into desmos
     def num_f(number, sign=False):
         if sign:
-            return "{:+4f}".format(number).rstrip('0').rstrip('.')
+            return "{:+3f}".format(number).rstrip('0').rstrip('.')
         else:
-            return "{:4f}".format(number).rstrip('0').rstrip('.')
+            return "{:3f}".format(number).rstrip('0').rstrip('.')
     
     real_string = ""
     imag_string = ""
     for c, k in zip(coeff, ind):
-        real_string += f"{num_f(c.real, sign=True)}*cos({num_f(2*np.pi*k)}*t) "
-        real_string += f"{num_f(-c.imag, sign=True)}*sin({num_f(2*np.pi*k)}*t) "
+        real_string += f"{num_f(c.real, sign=True)}cos({num_f(2*np.pi*k)}t)"
+        real_string += f"{num_f(-c.imag, sign=True)}sin({num_f(2*np.pi*k)}t)"
         
-        imag_string += f"{num_f(-c.imag, sign=True)}*cos({num_f(2*np.pi*k)}*t) " # negative sign to "flip" imaginary part (why ever this is necessary)
-        imag_string += f"{num_f(-c.real, sign=True)}*sin({num_f(2*np.pi*k)}*t) "
+        imag_string += f"{num_f(-c.imag, sign=True)}cos({num_f(2*np.pi*k)}t)" # negative sign to "flip" imaginary part (why ever this is necessary)
+        imag_string += f"{num_f(-c.real, sign=True)}sin({num_f(2*np.pi*k)}t)"
     
     #print(real_string)
     # just makes the string a bit nicer (I know, the following line does not contain nice Code lol)
@@ -86,7 +86,7 @@ def get_desmos_string(coeff, ind): # returns 2D vector with sin and cos-funcs to
 def main():    
     
     # read svg-file (change path for you own svg-file)
-    handler = SVG_Handler("images/nuts2.svg")
+    handler = SVG_Handler("images/year.svg")
     
     save_video = True # true to save animation as a video (might take some time)
     only_fourier_calc = False # will not take into account the animation --> way faster if you just want for example the desmos equation
@@ -94,7 +94,7 @@ def main():
     plot_reverse = True # animates the picture in reverse (for example if you have a text)
     
     
-    fourier_N = 40 # number of fourier coefficients, will calculate from k=-N up to k=N, the more 
+    fourier_N = 60 # number of fourier coefficients, will calculate from k=-N up to k=N, the more 
     T = [0, 1]     # "period" of your image (other intervals will work to, but could break the algorithm if "reverse" is set to true (sorry))
     
     animation_time = 30 # time in seconds that the animation will take
@@ -106,11 +106,18 @@ def main():
     print("Calculation of fourier coefficients done.")
 
     coeff[ind==0] = 0
+    for i in range(len(coeff)):
+        coeff[i] = coeff[i] / 10 # normalize coefficients
+
+    # divide all coefficients by 2
+
     # print(coeff)
     
     # outputs the latex/desmos code (comment out if you don't want it)
     print("\n" + get_fourier_latex(coeff, ind) + "\n")
     print("\n" + get_desmos_string(coeff, ind) + "\n")
+
+    sys.exit(0)
         
     
     if not only_fourier_calc:
